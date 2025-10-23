@@ -1,5 +1,5 @@
 streamlit==1.31.1
-sqlalchemy==2.0.30
+sqlalchemy==2.0.25
 psycopg2-binary  # ←バージョン指定を消すことで、自動で安定版をインストール
 python-dotenv==1.0.1
 pandas
