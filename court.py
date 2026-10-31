@@ -18,20 +18,16 @@ with col2:
     if st.button("🔄 更新"):
         st.rerun()
 
+from sqlalchemy import text as _text
 with engine.begin() as conn:
-    sessions_df = pd.read_sql("""
-        SELECT gender, phase, court_number, team_number, members, avg_rating
-        FROM court_sessions
-        WHERE session_date = %s
-        ORDER BY gender, phase, court_number, team_number
-    """, conn, params=(selected_date,))
-
-    matches_df = pd.read_sql("""
-        SELECT gender, phase, court_number, match_number, team_a, team_b, score_a, score_b
-        FROM court_matches
-        WHERE session_date = %s
-        ORDER BY gender, phase, court_number, match_number
-    """, conn, params=(selected_date,))
+    sessions_df = pd.read_sql(
+        _text("SELECT gender, phase, court_number, team_number, members, avg_rating FROM court_sessions WHERE session_date = :d ORDER BY gender, phase, court_number, team_number"),
+        conn, params={"d": selected_date}
+    )
+    matches_df = pd.read_sql(
+        _text("SELECT gender, phase, court_number, match_number, team_a, team_b, score_a, score_b FROM court_matches WHERE session_date = :d ORDER BY gender, phase, court_number, match_number"),
+        conn, params={"d": selected_date}
+    )
 
 if sessions_df.empty:
     st.info(f"{selected_date.strftime('%Y年%m月%d日')}のデータはまだ登録されていません。")
